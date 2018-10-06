@@ -1,4 +1,4 @@
-class ColorSelectorTangible {
+class ColorSelectorTangible implements java.util.Observer {
     int objW = 100;
     int objH = 100;
 
@@ -32,31 +32,33 @@ class ColorSelectorTangible {
         objPos = null;
     }
 
-    void addCursor(TuioCursor t) {
+    void update(java.util.Observable o, Object args) {
         if ( tuioObject == null ) return;
-        PVector c = new PVector(t.getX()*width, t.getY()*height);
-        cursor = PVector.sub( c, objPos);
-        cursor.rotate(-tuioObject.getAngle());
-    }
+        CursorEvent ce = (CursorEvent)args;
+        TuioCursor t = ce.cursor;
+        switch (ce.type) {              
+        case CLICK:
+            PVector c = new PVector(t.getX()*width, t.getY()*height);
 
-    void updateCursor(TuioCursor t) {
-        if ( tuioObject == null ) return;
-        PVector c = new PVector(t.getX()*width, t.getY()*height);
-        
-        cursor = PVector.sub( c, objPos);
-        cursor.rotate(-tuioObject.getAngle());
-        if (cursor.x > -objW/2 && cursor.x < -objW/2+colorButtonW &&
-        cursor.y > -objH/2-colorButtonH && cursor.y < -objH/2) {
-            objColor = color(233, 100, 40);
-        } else {
-            objColor = color(0);
+            cursor = PVector.sub( c, objPos);
+            cursor.rotate(-tuioObject.getAngle());
+            if (cursor.x > -objW/2 && cursor.x < -objW/2+colorButtonW &&
+                cursor.y > -objH/2-colorButtonH && cursor.y < -objH/2) {
+                objColor = color(255, 0, 0);
+            } else if (cursor.x > -objW/2+colorButtonW && cursor.x < -objW/2+2*colorButtonW &&
+                cursor.y > -objH/2-colorButtonH && cursor.y < -objH/2) {
+                objColor = color(255, 255, 0);
+            } else if (cursor.x > -objW/2+2*colorButtonW && cursor.x < -objW/2+3*colorButtonW &&
+                cursor.y > -objH/2-colorButtonH && cursor.y < -objH/2) {
+                objColor = color(0, 255, 255);
+            }
+            break;
+        case UP:
+            cursor = null;
+            break;
+        default:
         }
-       
-    }
-
-    void removeCursor(TuioCursor t) {
-        if ( tuioObject == null ) return;
-        cursor = null;
+        println(ce);
     }
 
     void draw() {
@@ -73,10 +75,16 @@ class ColorSelectorTangible {
             fill(255, 0, 0);
             rect(-objW/2+colorButtonW/2, -objH/2-colorButtonH/2, colorButtonW, colorButtonH);
 
+            fill(255, 255, 0);
+            rect(-objW/2+1.5*colorButtonW, -objH/2-colorButtonH/2, colorButtonW, colorButtonH);
+
+            fill(0, 255, 255);
+            rect(-objW/2+2.5*colorButtonW, -objH/2-colorButtonH/2, colorButtonW, colorButtonH);
+
 
             if (cursor != null ) {
                 fill(255);
-                ellipse(cursor.x, cursor.y, 5, 5);              
+                ellipse(cursor.x, cursor.y, 5, 5);
             }
             popStyle();
             popMatrix();
