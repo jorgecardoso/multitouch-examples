@@ -15,6 +15,7 @@ boolean verbose = false; // print console debug messages
 CursorEventDetector cursorEventDetector = new CursorEventDetector();
 
 ColorSelectorTangible[] colorTangibles;
+ContextMenu contextMenu;
 
 void setup()
 {
@@ -22,9 +23,11 @@ void setup()
     size(600, 400);
     noStroke();
     fill(0);
+    
 
     font = createFont("Arial", 18);
     scaleFactor = height/tableHeight;
+    textFont(font, 18*scaleFactor);
 
     tuioClient  = new TuioProcessing(this);
 
@@ -36,18 +39,23 @@ void setup()
     for (int i = 0; i < colorTangibles.length; i++) {
         cursorEventDetector.addObserver(colorTangibles[i]);
     }
+
+    contextMenu = new ContextMenu(new String[]{"Item 1", "Select me!"});
+    cursorEventDetector.addObserver(contextMenu);
 }
 
 
 void draw()
 {
     background(200);
-    textFont(font, 18*scaleFactor);
+    
     float objSize = objectSize*scaleFactor; 
     float curSize = cursorSize*scaleFactor; 
     for (int i = 0; i < colorTangibles.length; i++) {
         colorTangibles[i].draw();
     }
+
+    contextMenu.draw();
 
     ArrayList<TuioCursor> tuioCursorList = tuioClient.getTuioCursorList();
     for (int i=0; i<tuioCursorList.size(); i++) {
@@ -92,7 +100,7 @@ void addTuioObject(TuioObject tobj) {
 void updateTuioObject (TuioObject tobj) {
     if (verbose) println("set obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+") "+tobj.getX()+" "+tobj.getY()+" "+tobj.getAngle()
         +" "+tobj.getMotionSpeed()+" "+tobj.getRotationSpeed()+" "+tobj.getMotionAccel()+" "+tobj.getRotationAccel());
-    
+
     for (int i = 0; i < colorTangibles.length; i++) {
         if ( tobj.getSymbolID() == colorTangibles[i].objectId) {
             colorTangibles[i].updateObj(tobj);
@@ -103,7 +111,7 @@ void updateTuioObject (TuioObject tobj) {
 // called when an object is removed from the scene
 void removeTuioObject(TuioObject tobj) {
     if (verbose) println("del obj "+tobj.getSymbolID()+" ("+tobj.getSessionID()+")");
-    
+
     for (int i = 0; i < colorTangibles.length; i++) {
         if ( tobj.getSymbolID() == colorTangibles[i].objectId) {
             colorTangibles[i].removeObj();
@@ -130,7 +138,7 @@ void updateTuioCursor (TuioCursor tcur) {
 // called when a cursor is removed from the scene
 void removeTuioCursor(TuioCursor tcur) {
     if (verbose) println("del cur "+tcur.getCursorID()+" ("+tcur.getSessionID()+")");
-  
+
     cursorEventDetector.removeCursor(tcur);
 }
 

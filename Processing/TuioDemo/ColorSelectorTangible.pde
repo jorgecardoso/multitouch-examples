@@ -58,7 +58,7 @@ class ColorSelectorTangible implements java.util.Observer {
             break;
         default:
         }
-        println(ce);
+        //println(ce);
     }
 
     void draw() {
