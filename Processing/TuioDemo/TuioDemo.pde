@@ -2,6 +2,7 @@ import TUIO.*; //<>//
 
 TuioProcessing tuioClient;
 
+color backgroundColor = color(200);
 // these are some helper variables which are used
 // to create scalable graphical feedback
 float cursorSize = 15;
@@ -23,7 +24,6 @@ void setup()
     size(600, 400);
     noStroke();
     fill(0);
-    
 
     font = createFont("Arial", 18);
     scaleFactor = height/tableHeight;
@@ -40,23 +40,41 @@ void setup()
         cursorEventDetector.addObserver(colorTangibles[i]);
     }
 
-    contextMenu = new ContextMenu(new String[]{"Item 1", "Select me!"});
+    contextMenu = new ContextMenu(new String[]{"gray", "lightblue"});
     cursorEventDetector.addObserver(contextMenu);
+    
+    java.util.Observer backgroundChanger = new java.util.Observer() {
+        public void update(java.util.Observable o, Object args) {
+            String item = (String)args;
+            
+            if (item.equalsIgnoreCase("gray")) {
+                backgroundColor = color(200);
+                
+            } else if (item.equalsIgnoreCase("lightblue")) {
+                backgroundColor = #70DDF7;
+            }
+        }
+    };
+    
+   contextMenu.addObserver(backgroundChanger);
 }
 
 
 void draw()
 {
-    background(200);
-    
-    float objSize = objectSize*scaleFactor; 
-    float curSize = cursorSize*scaleFactor; 
+    background(backgroundColor);
+
     for (int i = 0; i < colorTangibles.length; i++) {
         colorTangibles[i].draw();
     }
 
     contextMenu.draw();
 
+    drawCursors();
+}
+
+void drawCursors() {
+    float curSize = cursorSize*scaleFactor; 
     ArrayList<TuioCursor> tuioCursorList = tuioClient.getTuioCursorList();
     for (int i=0; i<tuioCursorList.size(); i++) {
         TuioCursor tcur = tuioCursorList.get(i);

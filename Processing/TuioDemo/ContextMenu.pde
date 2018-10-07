@@ -1,8 +1,8 @@
-class ContextMenu implements java.util.Observer {
+class ContextMenu extends java.util.Observable implements java.util.Observer {
 
     String[] options;
 
-    boolean showing = true;
+    boolean showing = false;
 
     int menuWidth = 0, menuHeight = 0;
     int itemHeight = 0;
@@ -43,11 +43,14 @@ class ContextMenu implements java.util.Observer {
             break;
         case CLICK:
             PVector p = new PVector(t.getX()*width, t.getY()*height); 
-            println(position);
-            println(p);
+           
             if (p.x > position.x && p.x < position.x+menuWidth && p.y > position.y && p.y < position.y+menuHeight) {
                 int itemClicked = int(p.y-position.y) / itemHeight;
-                println("CLicked item", itemClicked, options[itemClicked]);
+               // println("CLicked item", itemClicked, options[itemClicked]);
+                setChanged();
+                notifyObservers(options[itemClicked]);
+                
+                // To dismiss the menu we can click outside, but near it
             } else if (p.x > position.x-menuWidth && p.x < position.x+menuWidth*2 && 
                 p.y > position.y-menuHeight && p.y < position.y+menuHeight*2) {
                 showing = false;

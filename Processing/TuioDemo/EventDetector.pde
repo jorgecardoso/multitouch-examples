@@ -5,7 +5,7 @@ class CursorEventDetector extends java.util.Observable {
 
     int LONGPRESS_DELAY = 600;
     java.util.Timer timer;
-    
+
     CursorEventDetector() {
         timer = new java.util.Timer();
     }
@@ -22,7 +22,7 @@ class CursorEventDetector extends java.util.Observable {
 
     void updateCursor(TuioCursor c) {
         TuioCursor prev = cursors.get(c.getCursorID());
-        
+
         if ( c.isMoving() ) {
             setChanged();
             notifyObservers(new CursorEvent(EventType.DRAG, c));
@@ -34,20 +34,20 @@ class CursorEventDetector extends java.util.Observable {
 
     void removeCursor(TuioCursor c) {
         TuioCursor downCursor = cursors.get(c.getCursorID());
-        
+
         // cancel longpress
         timers.get(c.getCursorID()).cancel();
 
         cursors.remove(c.getCursorID());
-        
-       
+
+
         // Click events are only triggered if cursor released near the down point and no LONGPRESS emmited yet.
         if (dist(downCursor.getX(), downCursor.getY(), c.getX(), c.getY()) < 0.01 &&
-        (c.getTuioTime().getTotalMilliseconds()-c.getStartTime().getTotalMilliseconds()) < LONGPRESS_DELAY) {
+            (c.getTuioTime().getTotalMilliseconds()-c.getStartTime().getTotalMilliseconds()) < LONGPRESS_DELAY) {
             setChanged();
             notifyObservers(new CursorEvent(EventType.CLICK, c));
         }
-        
+
         setChanged();
         notifyObservers(new CursorEvent(EventType.UP, c));
     }
@@ -72,7 +72,7 @@ class CursorEventDetector extends java.util.Observable {
 class CursorEvent {
     EventType type;
     TuioCursor cursor;
-    
+
     CursorEvent(EventType t, TuioCursor c) {
         type = t;
         cursor = c;
