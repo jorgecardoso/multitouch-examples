@@ -9,8 +9,7 @@ class ColorSelectorTangible implements java.util.Observer {
     TuioObject tuioObject = null;
 
     PVector objPos = null;
-    PVector cursor;
-
+   
     color objColor;
     ColorSelectorTangible(int objectId) {
         this.objectId = objectId;
@@ -34,13 +33,14 @@ class ColorSelectorTangible implements java.util.Observer {
 
     void update(java.util.Observable o, Object args) {
         if ( tuioObject == null ) return;
+        
         CursorEvent ce = (CursorEvent)args;
         TuioCursor t = ce.cursor;
         switch (ce.type) {              
         case CLICK:
             PVector c = new PVector(t.getX()*width, t.getY()*height);
 
-            cursor = PVector.sub( c, objPos);
+            PVector cursor = PVector.sub( c, objPos);
             cursor.rotate(-tuioObject.getAngle());
             if (cursor.x > -objW/2 && cursor.x < -objW/2+colorButtonW &&
                 cursor.y > -objH/2-colorButtonH && cursor.y < -objH/2) {
@@ -81,11 +81,7 @@ class ColorSelectorTangible implements java.util.Observer {
             fill(0, 255, 255);
             rect(-objW/2+2.5*colorButtonW, -objH/2-colorButtonH/2, colorButtonW, colorButtonH);
 
-
-            if (cursor != null ) {
-                fill(255);
-                ellipse(cursor.x, cursor.y, 5, 5);
-            }
+            
             popStyle();
             popMatrix();
         }
