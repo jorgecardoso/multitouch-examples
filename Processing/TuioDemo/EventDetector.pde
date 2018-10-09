@@ -23,13 +23,14 @@ class CursorEventDetector extends java.util.Observable {
     void updateCursor(TuioCursor c) {
         TuioCursor prev = cursors.get(c.getCursorID());
 
-        if ( c.isMoving() ) {
+        if ( c.isMoving() && dist(prev.getX(), prev.getY(), c.getX(), c.getY()) < 0.01) {
             setChanged();
             notifyObservers(new CursorEvent(EventType.DRAG, c));
 
             // cancel longpress
             timers.get(c.getCursorID()).cancel();
         }
+        cursors.put(c.getCursorID(), new TuioCursor(c));
     }
 
     void removeCursor(TuioCursor c) {
